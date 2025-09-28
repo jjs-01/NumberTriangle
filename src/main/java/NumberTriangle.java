@@ -1,4 +1,6 @@
 import java.io.*;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 /**
  * This is the provided NumberTriangle class to be used in this coding task.
@@ -88,8 +90,13 @@ public class NumberTriangle {
      *
      */
     public int retrieve(String path) {
-        // TODO implement this method
-        return -1;
+        if (path.isEmpty()) {
+            return root;
+        } else if (path.charAt(0) == 'l') {
+            return left.retrieve(path.substring(1));
+        } else {
+            return right.retrieve(path.substring(1));
+        }
     }
 
     /** Read in the NumberTriangle structure from a file.
@@ -112,17 +119,46 @@ public class NumberTriangle {
 
         // TODO define any variables that you want to use to store things
 
-        // will need to return the top of the NumberTriangle,
-        // so might want a variable for that.
-        NumberTriangle top = null;
 
         String line = br.readLine();
+        // will need to return the top of the NumberTriangle,
+        // so might want a variable for that.
+        NumberTriangle top = new NumberTriangle(Integer.parseInt(line));
+
+        NumberTriangle[] currParents = {top};
+        line = br.readLine();
+        // TODO: Simplify this implementation
         while (line != null) {
 
             // remove when done; this line is included so running starter code prints the contents of the file
-            System.out.println(line);
+            NumberTriangle[] currLine = new NumberTriangle[currParents.length + 1];
 
-            // TODO process the line
+            String num = "";
+            int numsSoFar = 0;
+            for (int i = 0; i < line.length(); i++) {
+                if (line.charAt(i) == ' ') {
+                    NumberTriangle newBranch = new NumberTriangle(Integer.parseInt(num));
+                    currLine[numsSoFar] = newBranch;
+
+                    currParents[numsSoFar/2].setRight(newBranch);
+                    currParents[(numsSoFar + 1)/2].setLeft(newBranch);
+                    num = "";
+                    numsSoFar++;
+                } else {
+                    num = num + line.charAt(i);
+                }
+            }
+            NumberTriangle newBranch = new NumberTriangle(Integer.parseInt(num));
+            currLine[numsSoFar] = newBranch;
+
+            currParents[currParents.length - 1].setLeft(newBranch);
+
+//            for (NumberTriangle tree: currParents) {
+//                System.out.print("" + tree.getRoot() + " ");
+//            }
+//            System.out.println();
+
+            currParents = currLine;
 
             //read the next line
             line = br.readLine();
