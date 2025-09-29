@@ -116,10 +116,6 @@ public class NumberTriangle {
         InputStream inputStream = NumberTriangle.class.getClassLoader().getResourceAsStream(fname);
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
 
-
-        // TODO define any variables that you want to use to store things
-
-
         String line = br.readLine();
         // will need to return the top of the NumberTriangle,
         // so might want a variable for that.
@@ -127,38 +123,21 @@ public class NumberTriangle {
 
         NumberTriangle[] currParents = {top};
         line = br.readLine();
-        // TODO: Simplify this implementation
         while (line != null) {
-
-            // remove when done; this line is included so running starter code prints the contents of the file
-            NumberTriangle[] currLine = new NumberTriangle[currParents.length + 1];
-
-            String num = "";
-            int numsSoFar = 0;
-            for (int i = 0; i < line.length(); i++) {
-                if (line.charAt(i) == ' ') {
-                    NumberTriangle newBranch = new NumberTriangle(Integer.parseInt(num));
-                    currLine[numsSoFar] = newBranch;
-
-                    currParents[numsSoFar/2].setRight(newBranch);
-                    currParents[(numsSoFar + 1)/2].setLeft(newBranch);
-                    num = "";
-                    numsSoFar++;
-                } else {
-                    num = num + line.charAt(i);
-                }
+            // Creates a list of the new number triangles to add to the triangle
+            NumberTriangle[] childTriangles = new NumberTriangle[currParents.length + 1];
+            String[] listOfStrings = line.split(" ");
+            for (int j = 0; j < listOfStrings.length; j++) {
+                childTriangles[j] = new NumberTriangle(Integer.parseInt(listOfStrings[j]));
             }
-            NumberTriangle newBranch = new NumberTriangle(Integer.parseInt(num));
-            currLine[numsSoFar] = newBranch;
 
-            currParents[currParents.length - 1].setLeft(newBranch);
+            // assigns the child number triangles to their according parent
+            for (int i = 0; i < currParents.length; i++) {
+                currParents[i].setLeft(childTriangles[i]);
+                currParents[i].setRight(childTriangles[i + 1]);
+            }
 
-//            for (NumberTriangle tree: currParents) {
-//                System.out.print("" + tree.getRoot() + " ");
-//            }
-//            System.out.println();
-
-            currParents = currLine;
+            currParents = childTriangles;
 
             //read the next line
             line = br.readLine();
